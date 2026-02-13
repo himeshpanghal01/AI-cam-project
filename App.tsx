@@ -4,13 +4,14 @@ import { Shield, Upload, FileVideo, FileImage, X, Search, Settings, Info, Menu }
 import { UploadedFile, AnalysisResult } from './types';
 import VideoInspector from './components/VideoInspector';
 import ChatWithVideo from './components/ChatWithVideo';
+import Support from './components/Support';
 import { analyzeVideo } from './services/geminiService';
 
 const App: React.FC = () => {
   const [file, setFile] = useState<UploadedFile | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [activeTab, setActiveTab] = useState<'inspect' | 'chat'>('inspect');
+  const [activeTab, setActiveTab] = useState<'inspect' | 'chat' | 'support'>('inspect');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,25 +65,23 @@ const App: React.FC = () => {
           <div className="bg-indigo-600 p-2 rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.5)]">
             <Shield className="w-6 h-6 text-white" />
           </div>
-          {isSidebarOpen && <span className="font-black text-sm tracking-tight text-white uppercase italic leading-tight">AI CCTV<br/>Video Inspector</span>}
+          {isSidebarOpen && <span className="font-black text-sm tracking-tight text-white uppercase italic leading-tight">AI CCTV<br />Video Inspector</span>}
         </div>
 
         <nav className="flex-1 px-4 space-y-2 mt-4">
-          <button 
+          <button
             onClick={() => setActiveTab('inspect')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-              activeTab === 'inspect' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-900/50 hover:text-slate-300'
-            }`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'inspect' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-900/50 hover:text-slate-300'
+              }`}
           >
             <Search className="w-5 h-5" />
             {isSidebarOpen && <span className="font-semibold">Inspector</span>}
           </button>
-          <button 
-             onClick={() => setActiveTab('chat')}
-             disabled={!file}
-             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-               activeTab === 'chat' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-900/50 hover:text-slate-300 disabled:opacity-30'
-             }`}
+          <button
+            onClick={() => setActiveTab('chat')}
+            disabled={!file}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'chat' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-900/50 hover:text-slate-300 disabled:opacity-30'
+              }`}
           >
             <FileVideo className="w-5 h-5" />
             {isSidebarOpen && <span className="font-semibold">Query Video</span>}
@@ -94,7 +93,11 @@ const App: React.FC = () => {
             <Settings className="w-5 h-5" />
             {isSidebarOpen && <span className="font-medium">Settings</span>}
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-900/50 transition-all">
+          <button
+            onClick={() => setActiveTab('support')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'support' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-900/50 hover:text-slate-300'
+              }`}
+          >
             <Info className="w-5 h-5" />
             {isSidebarOpen && <span className="font-medium">Support</span>}
           </button>
@@ -111,7 +114,7 @@ const App: React.FC = () => {
             </button>
             <div>
               <h1 className="text-xl font-bold text-white tracking-tight">
-                {activeTab === 'inspect' ? 'Intelligence Dashboard' : 'Contextual Query Console'}
+                {activeTab === 'inspect' ? 'Intelligence Dashboard' : activeTab === 'chat' ? 'Contextual Query Console' : 'Support Center'}
               </h1>
               <p className="text-xs text-slate-500 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -120,20 +123,22 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-             <div className="flex -space-x-2">
-               {[1,2,3].map(i => (
-                 <img key={i} src={`https://picsum.photos/seed/${i+10}/32/32`} className="w-8 h-8 rounded-full border-2 border-slate-950" />
-               ))}
-             </div>
-             <div className="px-3 py-1 bg-slate-900 rounded-full text-[10px] font-bold text-slate-400 border border-slate-800">
-               STATION_X
-             </div>
+            <div className="flex -space-x-2">
+              {[1, 2, 3].map(i => (
+                <img key={i} src={`https://picsum.photos/seed/${i + 10}/32/32`} className="w-8 h-8 rounded-full border-2 border-slate-950" />
+              ))}
+            </div>
+            <div className="px-3 py-1 bg-slate-900 rounded-full text-[10px] font-bold text-slate-400 border border-slate-800">
+              STATION_X
+            </div>
           </div>
         </header>
 
         {/* Dynamic Content */}
-        <div className="flex-1 overflow-hidden p-6">
-          {!file ? (
+        <div className="flex-1 overflow-hidden">
+          {activeTab === 'support' ? (
+            <Support />
+          ) : !file ? (
             <div className="h-full flex items-center justify-center">
               <div className="max-w-xl w-full">
                 <label className="group relative flex flex-col items-center justify-center w-full h-80 border-2 border-dashed border-slate-800 rounded-3xl cursor-pointer bg-slate-950/40 hover:bg-slate-900/40 hover:border-indigo-500/50 transition-all duration-500">
@@ -169,30 +174,30 @@ const App: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col p-6">
               <div className="flex items-center justify-between mb-4 px-2">
-                 <div className="flex items-center gap-3">
-                   <div className="p-2 bg-indigo-600/20 rounded-lg">
-                     <FileVideo className="w-5 h-5 text-indigo-500" />
-                   </div>
-                   <div>
-                     <span className="text-sm font-bold text-slate-200 block">{file.file.name}</span>
-                     <span className="text-[10px] text-slate-500 uppercase mono">{(file.file.size / (1024*1024)).toFixed(2)} MB • {file.file.type}</span>
-                   </div>
-                 </div>
-                 <button 
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-indigo-600/20 rounded-lg">
+                    <FileVideo className="w-5 h-5 text-indigo-500" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-slate-200 block">{file.file.name}</span>
+                    <span className="text-[10px] text-slate-500 uppercase mono">{(file.file.size / (1024 * 1024)).toFixed(2)} MB • {file.file.type}</span>
+                  </div>
+                </div>
+                <button
                   onClick={removeFile}
                   className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
-                 >
-                   <X className="w-5 h-5" />
-                 </button>
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
               {activeTab === 'inspect' ? (
-                <VideoInspector 
-                  file={file} 
-                  analysis={analysis} 
-                  isAnalyzing={isAnalyzing} 
+                <VideoInspector
+                  file={file}
+                  analysis={analysis}
+                  isAnalyzing={isAnalyzing}
                   onAnalyze={handleDeepScan}
                 />
               ) : (
