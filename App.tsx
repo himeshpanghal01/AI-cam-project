@@ -7,6 +7,7 @@ import ChatWithVideo from './components/ChatWithVideo';
 import Support from './components/Support';
 import { analyzeVideo } from './services/geminiService';
 
+
 const App: React.FC = () => {
   const [file, setFile] = useState<UploadedFile | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -61,7 +62,7 @@ const App: React.FC = () => {
     <div className="flex h-screen bg-[#020617] text-slate-100 overflow-hidden font-sans">
       {/* Sidebar Navigation */}
       <aside className={`bg-slate-950 border-r border-slate-900 transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'} flex flex-col`}>
-        <div className="p-6 flex items-center gap-3">
+        <div className="p-6 flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('inspect')}>
           <div className="bg-indigo-600 p-2 rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.5)]">
             <Shield className="w-6 h-6 text-white" />
           </div>
